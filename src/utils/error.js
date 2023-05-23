@@ -12,7 +12,24 @@ const globalErrorHandler = (err, req, res, next) => {
   res.status(err.statusCode).json({ message: err.message });
 };
 
+class BaseError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.message = message;
+    this.statusCode = statusCode;
+  }
+}
+
+class DatabaseError extends BaseError {
+  constructor(message) {
+    super(message);
+    this.message = 'DATABASE_ERROR';
+    this.statusCode = 400;
+  }
+};
+
 module.exports = {
   catchAsync,
   globalErrorHandler,
+  DatabaseError
 };

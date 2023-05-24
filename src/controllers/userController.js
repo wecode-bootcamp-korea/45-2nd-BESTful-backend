@@ -18,8 +18,29 @@ const getUserById = catchAsync(async (req, res) => {
   return res.status(200).json(userInfo);
 });
 
+const editUserInfo = catchAsync(async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { userName, cellphone, sex, bio } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'User Not Found' });
+    }
+
+    await userService.editUserInfo(userId, userName, cellphone, sex, bio);
+
+    return res.status(200).json({ message: 'User info updated successfully' });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      message: 'Error_editUserInfo/usersController',
+    });
+  }
+});
+
 
 module.exports = {
   signInKakao,
-  getUserById
+  getUserById,
+  editUserInfo
 };

@@ -3,6 +3,8 @@ const { BaseError } = require('../utils/error');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
+const { validateUserName } = require('../utils/validationCheck');
+
 const signInKakao = async (kakaoToken) => {
   const result = await axios.post('https://kapi.kakao.com/v2/user/me', null, {
     headers: {
@@ -39,7 +41,34 @@ const getUserById = async (userId) => {
   return await userDao.getUserById(userId);
 };
 
+const editUserInfo = async (userId, userName, cellphone, sex, bio) => {
+  try {
+    if (userName && !await validateUserName(userName)) {
+      throw new Error('Invalid user name');
+    }
+
+    const currentUserData = await userDao.getUserById(userId);
+    if (!currentUserData) {
+      throw new Error('User not found');
+    }
+
+    userName = userName || currentUserData.userName;
+    cellphone = cellphone || currentUserData.cellphone;
+    sex = sex || currentUserData.sex;
+    bio = bio || currentUserData.bio;
+
+    await userDao.editUserInfo(userId, userName, cellphone, sex, bio);
+
+    return userDao.getUserById(userId);
+  } catch (err) {
+    console.error(err);
+    throw new Error("Error updating user info: " + err.message);
+  }
+};
+
+
 module.exports = {
   signInKakao,
-  getUserById
+  getUserById,
+  editUserInfo
 };

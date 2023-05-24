@@ -71,8 +71,44 @@ const getUserById = async (userId) => {
   }
 };
 
+const editUserInfo = async (userId, userName, cellphone, sex, bio) => {
+  try {
+    await dataSource.query(
+      `UPDATE users
+        SET
+          user_name = ?,
+          cellphone = ?,
+          sex = ?,
+          bio = ?
+        WHERE id = ?`,
+      [userName, cellphone, sex, bio, userId]
+    );
+  } catch (err) {
+    console.log(err);
+    throw new Error("Error updating address for User usersDAO " + err.message);
+  }
+};
+
+const checkUserNameExists = async (userName) => {
+  try {
+    const [user] = await dataSource.query(
+      `
+      SELECT id
+      FROM users
+      WHERE user_name = ?
+      `,
+      [userName]
+    );
+    return !!user; // Convert the result to a boolean value
+  } catch (err) {
+    throw new DatabaseError('DataSource_Error');
+  }
+};
+
 module.exports = {
   getUserByKakaoId,
   getUserById,
-  createUser
+  createUser,
+  editUserInfo,
+  checkUserNameExists
 };

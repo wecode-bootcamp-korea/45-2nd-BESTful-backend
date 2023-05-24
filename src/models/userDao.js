@@ -89,26 +89,26 @@ const editUserInfo = async (userId, userName, cellphone, sex, bio) => {
   }
 };
 
-const checkUserNameExists = async (userName) => {
+const uploadImageUrl = async (userId, profileImageUrl) => {
   try {
-    const [user] = await dataSource.query(
-      `
-      SELECT id
-      FROM users
-      WHERE user_name = ?
-      `,
-      [userName]
+    await dataSource.query(
+      `UPDATE users
+      SET
+        profile_image_url = ?
+      WHERE id = ?`,
+      [profileImageUrl, userId]
     );
-    return !!user; // Convert the result to a boolean value
   } catch (err) {
-    throw new DatabaseError('DataSource_Error');
+    console.log(err);
+    throw new Error("Error updating profile image for User in usersDao: " + err.message);
   }
 };
+
 
 module.exports = {
   getUserByKakaoId,
   getUserById,
   createUser,
   editUserInfo,
-  checkUserNameExists
+  uploadImageUrl
 };

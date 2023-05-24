@@ -26,10 +26,10 @@ class DatabaseError extends BaseError {
     this.message = 'DATABASE_ERROR';
     this.statusCode = 400;
   }
-};
+}
 
 module.exports = {
   catchAsync,
   globalErrorHandler,
-  DatabaseError
+  DatabaseError,
 };

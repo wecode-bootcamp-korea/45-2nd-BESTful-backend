@@ -11,7 +11,15 @@ const signInKakao = catchAsync(async (req, res) => {
   return res.status(200).json({ token: accessToken, userName: name });
 });
 
+const getUserById = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const userInfo = await userService.getUserById(userId);
+
+  return res.status(200).json(userInfo);
+});
+
 
 module.exports = {
-  signInKakao
+  signInKakao,
+  getUserById
 };

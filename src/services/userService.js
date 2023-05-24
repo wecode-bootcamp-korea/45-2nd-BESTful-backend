@@ -34,6 +34,12 @@ const signInKakao = async (kakaoToken) => {
   return { accessToken: accessToken, userName: name };
 };
 
+
+const getUserById = async (userId) => {
+  return await userDao.getUserById(userId);
+};
+
 module.exports = {
-  signInKakao
+  signInKakao,
+  getUserById
 };

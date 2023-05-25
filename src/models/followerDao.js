@@ -29,7 +29,37 @@ const unfollowUser = async (userId, followedId) => {
   }
 };
 
+const getFollowers = async (userId) => {
+  try {
+    const query = `
+      SELECT
+        users.id,
+        users.kakao_id,
+        users.email,
+        users.user_name,
+        users.cellphone,
+        users.profile_image_url,
+        users.sex,
+        users.bio,
+        users.created_at,
+        users.updated_at,
+        users.deleted_at
+      FROM users
+      JOIN followers ON followers.followed_id = users.id
+      WHERE followers.user_id = ?
+    `;
+    const rows = await dataSource.query(query, [userId]);
+
+    // Return the followers directly without converting to JSON
+    return rows;
+  } catch (err) {
+    console.log(err);
+    throw new DatabaseError('DataSource_Error: ' + err.message);
+  }
+};
+
 module.exports = {
   followUser,
-  unfollowUser
+  unfollowUser,
+  getFollowers
 };

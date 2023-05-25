@@ -49,25 +49,25 @@ const editUserInfo = async (userId, userName, cellphone, sex, bio) => {
     );
     return editUserInfo;
   } catch (err) {
-    throw new Error("Error_ editUserInfo /usersService " + err.message);
+    throw new Error('Error_ editUserInfo /usersService ' + err.message);
   }
 };
 
 const uploadImageUrl = async (userId, profileImageUrl) => {
   try {
-    console.log("service : " + profileImageUrl);
-    await getUserById(userId);
-    const uploadImageResult = await userDao.uploadImageUrl(userId, profileImageUrl);
+    const uploadImageResult = await userDao.uploadImageUrl(
+      userId,
+      profileImageUrl
+    );
     return uploadImageResult;
   } catch (err) {
-    throw new Error("Error uploading image in uploadImageUrl: " + err.message);
+    throw new Error('Error uploading image in uploadImageUrl: ' + err.message);
   }
 };
-
 
 module.exports = {
   signInKakao,
   getUserById,
   editUserInfo,
-  uploadImageUrl
+  uploadImageUrl,
 };

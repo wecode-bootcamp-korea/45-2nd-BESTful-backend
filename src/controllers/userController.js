@@ -1,8 +1,6 @@
 const userService = require('../services/userService');
 const { catchAsync, BaseError } = require('../utils/error');
 
-const { upload } = require('../utils/s3');
-
 const signInKakao = catchAsync(async (req, res) => {
   const { kakaoToken } = req.body;
 
@@ -20,13 +18,13 @@ const getUserById = catchAsync(async (req, res) => {
   return res.status(200).json(userInfo);
 });
 
-const editUserInfo = catchAsync(async (req, res) => {
+const editUserInfo = async (req, res) => {
   try {
     const userId = req.user.id;
     const { userName, cellphone, sex, bio } = req.body;
 
     if (!userId) {
-      return res.status(400).json({ message: 'User Not Found' });
+      return res.status(400).json({ message: "User Not Found" });
     }
 
     await userService.editUserInfo(userId, userName, cellphone, sex, bio);
@@ -38,24 +36,24 @@ const editUserInfo = catchAsync(async (req, res) => {
       message: "Error_ editUserInfo /usersController",
     });
   }
-});
+};
 
 const uploadImageUrl = async (req, res) => {
   try {
     const userId = req.user.id;
-    const profileImageUrl = req.file.location;
+    const { profileImageUrl } = req.body;
 
     if (!userId) {
-      return res.status(400).json({ message: 'User Not Found' });
+      return res.status(400).json({ message: "User Not Found" });
     }
 
     await userService.uploadImageUrl(userId, profileImageUrl);
 
-    return res.status(200).json({ message: 'User image uploaded successfully' });
+    return res.status(200).json({ message: "user image upload successfully" });
   } catch (err) {
     console.log(err);
     res.status(400).json({
-      message: 'Error uploading image in uploadImageUrl',
+      message: "Error uploading image in uploadImageUrl",
     });
   }
 };
@@ -64,5 +62,5 @@ module.exports = {
   signInKakao,
   getUserById,
   editUserInfo,
-  uploadImageUrl
+  uploadImageUrl,
 };

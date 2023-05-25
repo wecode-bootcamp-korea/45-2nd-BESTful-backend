@@ -57,6 +57,7 @@ const getUserById = async (userId) => {
         id,
         email,
         user_name userName,
+        cellphone,
         profile_image_url profileImageUrl,
         sex,
         bio
@@ -91,19 +92,28 @@ const editUserInfo = async (userId, userName, cellphone, sex, bio) => {
 
 const uploadImageUrl = async (userId, profileImageUrl) => {
   try {
-    await dataSource.query(
-      `UPDATE users
-      SET
-        profile_image_url = ?
-      WHERE id = ?`,
-      [profileImageUrl, userId]
-    );
+    if (profileImageUrl) {
+      await dataSource.query(
+        `UPDATE users
+        SET
+          profile_image_url = ?
+        WHERE id = ?`,
+        [profileImageUrl, userId]
+      );
+    } else {
+      await dataSource.query(
+        `UPDATE users
+        SET
+          profile_image_url = NULL
+        WHERE id = ?`,
+        [userId]
+      );
+    }
   } catch (err) {
     console.log(err);
     throw new Error("Error updating profile image for User in usersDao: " + err.message);
   }
 };
-
 
 module.exports = {
   getUserByKakaoId,

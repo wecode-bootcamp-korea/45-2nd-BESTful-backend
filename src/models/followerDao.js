@@ -15,6 +15,21 @@ const followUser = async (userId, followedId) => {
   }
 };
 
+const unfollowUser = async (userId, followedId) => {
+  try {
+    await dataSource.query(
+      `
+    DELETE FROM followers
+    WHERE user_id = ? AND followed_id = ?
+    `,
+      [userId, followedId]
+    );
+  } catch (err) {
+    throw new DatabaseError('DataSource_Error');
+  }
+};
+
 module.exports = {
-  followUser
+  followUser,
+  unfollowUser
 };

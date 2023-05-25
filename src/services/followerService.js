@@ -15,6 +15,21 @@ const followUser = async (userId, followedId) => {
   return { message: 'Successfully followed user.' };
 };
 
+const unfollowUser = async (userId, followedId) => {
+  if (userId === followedId) {
+    throw new BaseError('You cannot unfollow yourself.');
+  }
+
+  try {
+    await followerDao.unfollowUser(userId, followedId);
+  } catch (err) {
+    throw new BaseError('Failed to unfollow user.');
+  }
+
+  return { message: 'Successfully unfollowed user.' };
+};
+
 module.exports = {
-  followUser
+  followUser,
+  unfollowUser
 };

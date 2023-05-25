@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.post('/', checkLogInToken, followerController.followUser);
 router.delete('/', checkLogInToken, followerController.unfollowUser);
+router.get('/:userId', checkLogInToken, followerController.getFollowers);
 
 module.exports = { router };

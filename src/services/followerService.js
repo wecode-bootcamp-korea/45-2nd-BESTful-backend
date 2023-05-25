@@ -29,7 +29,18 @@ const unfollowUser = async (userId, followedId) => {
   return { message: 'Successfully unfollowed user.' };
 };
 
+const getFollowers = async (userId) => {
+  try {
+    const followers = await followerDao.getFollowers(userId);
+    return followers;
+  } catch (err) {
+    console.log(err);
+    throw new BaseError('Failed to retrieve followers.');
+  }
+};
+
 module.exports = {
   followUser,
-  unfollowUser
+  unfollowUser,
+  getFollowers
 };

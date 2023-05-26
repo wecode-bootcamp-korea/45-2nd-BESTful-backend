@@ -30,6 +30,7 @@ const editUserInfo = async (req, res) => {
     await userService.editUserInfo(userId, userName, cellphone, sex, bio);
 
     return res.status(200).json({ message: "user info update successfully" });
+    return res.status(200).json({ message: "user info update successfully" });
   } catch (err) {
     console.log(err);
     res.status(400).json({
@@ -38,7 +39,7 @@ const editUserInfo = async (req, res) => {
   }
 };
 
-const uploadImageUrl = async (req, res) => {
+const uploadImageUrl = catchAsync(async (req, res) => {
   try {
     const userId = req.user.id;
     const { profileImageUrl } = req.body;
@@ -47,7 +48,7 @@ const uploadImageUrl = async (req, res) => {
       return res.status(400).json({ message: "User Not Found" });
     }
 
-    await userService.uploadImageUrl(userId, profileImageUrl);
+    await userService.uploadImageUrl(profileImageUrl);
 
     return res.status(200).json({ message: "user image upload successfully" });
   } catch (err) {
@@ -56,11 +57,19 @@ const uploadImageUrl = async (req, res) => {
       message: "Error uploading image in uploadImageUrl",
     });
   }
-};
+});
+
+const getOtherUser = catchAsync(async (req, res) => {
+  const userId = req.params.userId;
+  const userInfo = await userService.getOtherUser(userId);
+
+  return res.status(200).json(userInfo);
+});
 
 module.exports = {
   signInKakao,
   getUserById,
   editUserInfo,
   uploadImageUrl,
+  getOtherUser
 };

@@ -30,6 +30,7 @@ class DatabaseError extends BaseError {
 
 module.exports = {
   catchAsync,
+  BaseError,
   globalErrorHandler,
   BaseError,
   DatabaseError

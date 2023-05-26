@@ -1,18 +1,14 @@
 const express = require('express');
-
 const router = express.Router();
-const express = require('express');
+
 const userRouter = require('./userRouter');
 const feedRouter = require('./feedRouter');
-const commetRouter = require('./commentRouter');
+const commentRouter = require('./commentRouter');
+const followerRouter = require('./followerRouter');
 
-<<<<<<< HEAD
-const router = express.Router();
-
-=======
->>>>>>> main
 router.use('/users', userRouter.router);
 router.use('/feeds', feedRouter.router);
-router.use('/comment', commetRouter.router);
+router.use('/comment', commentRouter.router);
+router.use('/follower', followerRouter.router);
 
 module.exports = router;

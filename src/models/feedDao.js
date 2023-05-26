@@ -11,6 +11,7 @@ const getAllFeed = async (offset, limit, genderId, seasonId, styleId) => {
       subq.profile_image_url,
       subq.feedDescription,
       subq.createdAt,
+      subq.likesCount,
       JSON_ARRAYAGG(
         JSON_OBJECT(
             'contentUrl', subq.contentUrl,
@@ -44,10 +45,12 @@ const getAllFeed = async (offset, limit, genderId, seasonId, styleId) => {
                 f.description AS feedDescription,
                 DATE_FORMAT(f.created_at, '%Y.%m.%d') AS createdAt,
                 c_f.content_url AS contentUrl,
-                c_f.id AS contentFileId
+                c_f.id AS contentFileId,
+                COUNT(DISTINCT l.id) likesCount
             FROM feed f
             JOIN users u ON u.id = f.user_id
             JOIN content_files c_f ON c_f.feed_id = f.id
+            LEFT JOIN likes l ON l.feed_id = f.id
             JOIN tags t ON c_f.id = t.content_file_id
             JOIN clothes c ON t.cloth_id = c.id
             JOIN seasons sea ON c.season_id = sea.id
@@ -72,7 +75,8 @@ const getAllFeed = async (offset, limit, genderId, seasonId, styleId) => {
     subq.userName, 
     subq.profile_image_url, 
     subq.feedDescription, 
-    subq.createdAt`;
+    subq.createdAt,
+    subq.likesCount`;
 
     const rooms = await dataSource.query(
       `${baseQuery} ${whereCondition} ${groupByQuery} ${sortQuery} ${limitQuery}`

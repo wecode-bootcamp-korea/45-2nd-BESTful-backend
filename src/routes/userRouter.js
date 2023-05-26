@@ -3,8 +3,6 @@ const checkLogInToken = require('../utils/auth');
 const userController = require('../controllers/userController');
 const { upload } = require('../utils/s3');
 
-const { upload } = require('../utils/s3')
-
 const router = express.Router();
 
 router.post('/kakaologin', userController.signInKakao);

@@ -29,7 +29,22 @@ const limitBuilder = (offset, limit) => {
   return `LIMIT ${limit} OFFSET ${offset}`;
 };
 
+const orderByBuilder = (orderBy) => {
+  let orderQuery = '';
+
+  switch (orderBy) {
+    case 'likesDesc':
+      orderQuery = 'ORDER BY subq.likesCount DESC';
+      break;
+    default:
+      orderQuery = 'ORDER BY subq.createdAt DESC';
+      break;
+  }
+  return orderQuery;
+};
+
 module.exports = {
   filterBuilder,
   limitBuilder,
+  orderByBuilder,
 };

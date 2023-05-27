@@ -2,10 +2,22 @@ const { DatabaseError } = require('../utils/error');
 const dataSource = require('./dataSource');
 const builder = require('./builder');
 
-const getAllFeed = async (feedId, targetUserId, offset, limit, genderId, seasonId, styleId, orderBy, userId) => {
+const getAllFeed = async (
+  feedId,
+  targetUserId,
+  selectedUserId,
+  offset,
+  limit,
+  genderId,
+  seasonId,
+  styleId,
+  orderBy,
+  userId
+) => {
   try {
     const baseQuery = `
       SELECT
+      subq.userId,
       subq.userId,
       subq.feedId,
       subq.userName,
@@ -59,7 +71,15 @@ const getAllFeed = async (feedId, targetUserId, offset, limit, genderId, seasonI
             JOIN styles sty ON c.style_id = sty.id  
         `;
 
-    const whereCondition = builder.filterBuilder(genderId, seasonId, styleId, userId, feedId, targetUserId);
+    const whereCondition = builder.filterBuilder(
+      genderId,
+      seasonId,
+      styleId,
+      userId,
+      feedId,
+      targetUserId,
+      selectedUserId
+    );
     const sortQuery = builder.orderByBuilder(orderBy);
     const limitQuery = builder.limitBuilder(offset, limit);
     const groupByQuery = ` 

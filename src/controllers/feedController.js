@@ -3,7 +3,7 @@ const { catchAsync } = require('../utils/error');
 
 const getAllFeed = catchAsync(async (req, res) => {
   const { from, count, genderId, seasonId, styleId, orderBy } = req.query;
-  const { feedId, targetUserId } = req.params;
+  const { feedId, targetUserId, selectedUserId } = req.params;
 
   const DEFAULT_LIMIT = 3;
 
@@ -15,6 +15,7 @@ const getAllFeed = catchAsync(async (req, res) => {
   const result = await feedService.getAllFeed(
     feedId,
     targetUserId,
+    selectedUserId,
     offset,
     limit,
     genderId,

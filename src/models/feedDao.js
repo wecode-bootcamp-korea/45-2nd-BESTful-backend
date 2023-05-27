@@ -2,10 +2,11 @@ const { DatabaseError } = require('../utils/error');
 const dataSource = require('./dataSource');
 const builder = require('./builder');
 
-const getAllFeed = async (feedId, offset, limit, genderId, seasonId, styleId, orderBy, userId) => {
+const getAllFeed = async (feedId, targetUserId, offset, limit, genderId, seasonId, styleId, orderBy, userId) => {
   try {
     const baseQuery = `
       SELECT
+      subq.userId,
       subq.feedId,
       subq.userName,
       subq.profileImageUrl,
@@ -39,6 +40,7 @@ const getAllFeed = async (feedId, offset, limit, genderId, seasonId, styleId, or
       ) AS contentUrls
         FROM (
             SELECT
+                u.id AS userId,
                 f.id AS feedId,
                 u.user_name AS userName,
                 u.profile_image_url profileImageUrl,
@@ -57,7 +59,7 @@ const getAllFeed = async (feedId, offset, limit, genderId, seasonId, styleId, or
             JOIN styles sty ON c.style_id = sty.id  
         `;
 
-    const whereCondition = builder.filterBuilder(genderId, seasonId, styleId, userId, feedId, userId);
+    const whereCondition = builder.filterBuilder(genderId, seasonId, styleId, userId, feedId, targetUserId);
     const sortQuery = builder.orderByBuilder(orderBy);
     const limitQuery = builder.limitBuilder(offset, limit);
     const groupByQuery = ` 
@@ -71,6 +73,7 @@ const getAllFeed = async (feedId, offset, limit, genderId, seasonId, styleId, or
     c_f.id
     ) AS subq 
     GROUP BY 
+    subq.userId,
     subq.feedId, 
     subq.userName, 
     subq.profileImageUrl, 
@@ -83,7 +86,7 @@ const getAllFeed = async (feedId, offset, limit, genderId, seasonId, styleId, or
     return rooms;
   } catch (error) {
     console.log(error);
-    throw new DatabaseError('CAN_NOT_GET_FEEDS');
+    throw new DatabaseError();
   }
 };
 

@@ -2,7 +2,7 @@ const { DatabaseError } = require('../utils/error');
 const dataSource = require('./dataSource');
 const builder = require('./builder');
 
-const getAllFeed = async (offset, limit, genderId, seasonId, styleId, orderBy, userId) => {
+const getAllFeed = async (feedId, offset, limit, genderId, seasonId, styleId, orderBy, userId) => {
   try {
     const baseQuery = `
       SELECT
@@ -57,7 +57,7 @@ const getAllFeed = async (offset, limit, genderId, seasonId, styleId, orderBy, u
             JOIN styles sty ON c.style_id = sty.id  
         `;
 
-    const whereCondition = builder.filterBuilder(genderId, seasonId, styleId, userId);
+    const whereCondition = builder.filterBuilder(genderId, seasonId, styleId, userId, feedId, userId);
     const sortQuery = builder.orderByBuilder(orderBy);
     const limitQuery = builder.limitBuilder(offset, limit);
     const groupByQuery = ` 
@@ -87,13 +87,12 @@ const getAllFeed = async (offset, limit, genderId, seasonId, styleId, orderBy, u
   }
 };
 
-
 const uploadFeed = async (userId, description) => {
   try {
-    const result = await dataSource.query(
-      `INSERT INTO feed (user_id, description) VALUES (?, ?)`,
-      [userId, description]
-    );
+    const result = await dataSource.query(`INSERT INTO feed (user_id, description) VALUES (?, ?)`, [
+      userId,
+      description,
+    ]);
 
     return result;
   } catch (error) {
@@ -104,5 +103,5 @@ const uploadFeed = async (userId, description) => {
 
 module.exports = {
   getAllFeed,
-  uploadFeed
+  uploadFeed,
 };

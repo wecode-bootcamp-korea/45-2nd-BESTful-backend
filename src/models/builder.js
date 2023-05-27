@@ -1,4 +1,4 @@
-const filterBuilder = (genderId, seasonId, styleId, userId) => {
+const filterBuilder = (genderId, seasonId, styleId, feedId, userId) => {
   let conditionArr = [];
 
   if (genderId) {
@@ -11,6 +11,17 @@ const filterBuilder = (genderId, seasonId, styleId, userId) => {
 
   if (styleId) {
     conditionArr.push(`sty.id= ${styleId}`);
+  }
+
+  if (userId) {
+    conditionArr.push(`f.user_id IN (
+      SELECT followed_id
+      FROM followers
+      WHERE user_id = ${userId}
+    )`);
+  }
+  if (feedId) {
+    conditionArr.push(`f.id = ${feedId}`);
   }
 
   if (userId) {

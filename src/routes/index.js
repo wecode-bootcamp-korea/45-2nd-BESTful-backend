@@ -5,6 +5,7 @@ const userRouter = require('./userRouter');
 const feedRouter = require('./feedRouter');
 const commentRouter = require('./commentRouter');
 const followerRouter = require('./followerRouter');
+const bestRouter = require('./bestRouter');
 
 router.use('/users', userRouter.router);
 router.use('/feeds', feedRouter.router);

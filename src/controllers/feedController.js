@@ -4,7 +4,7 @@ const { catchAsync } = require('../utils/error');
 const getAllFeed = catchAsync(async (req, res) => {
   const { from, count, genderId, seasonId, styleId, orderBy } = req.query;
 
-  const DEFAULT_LIMIT = 6;
+  const DEFAULT_LIMIT = 3;
 
   const DEFAULT_OFFSET = 0;
 
@@ -12,6 +12,22 @@ const getAllFeed = catchAsync(async (req, res) => {
   const limit = count ? count : DEFAULT_LIMIT;
 
   const result = await feedService.getAllFeed(offset, limit, genderId, seasonId, styleId, orderBy);
+
+  return res.status(200).json(result);
+});
+
+const getAllFeedFollowings = catchAsync(async (req, res) => {
+  const { from, count, genderId, seasonId, styleId, orderBy } = req.query;
+  const userId = req.user.id;
+
+  const DEFAULT_LIMIT = 3;
+
+  const DEFAULT_OFFSET = 0;
+
+  const offset = from ? from : DEFAULT_OFFSET;
+  const limit = count ? count : DEFAULT_LIMIT;
+
+  const result = await feedService.getAllFeed(offset, limit, genderId, seasonId, styleId, orderBy, userId);
 
   return res.status(200).json(result);
 });
@@ -25,8 +41,8 @@ const uploadFeed = catchAsync(async (req, res) => {
   return res.status(201).json({ feed: result });
 });
 
-
 module.exports = {
   getAllFeed,
-  uploadFeed
+  getAllFeedFollowings,
+  uploadFeed,
 };

@@ -24,17 +24,16 @@ const editUserInfo = async (req, res) => {
     const { userName, cellphone, sex, bio } = req.body;
 
     if (!userId) {
-      return res.status(400).json({ message: "User Not Found" });
+      return res.status(400).json({ message: 'User Not Found' });
     }
 
     await userService.editUserInfo(userId, userName, cellphone, sex, bio);
 
-    return res.status(200).json({ message: "user info update successfully" });
-    return res.status(200).json({ message: "user info update successfully" });
+    return res.status(200).json({ message: 'user info update successfully' });
   } catch (err) {
     console.log(err);
     res.status(400).json({
-      message: "Error_ editUserInfo /usersController",
+      message: 'Error_ editUserInfo /usersController',
     });
   }
 };
@@ -45,16 +44,16 @@ const uploadImageUrl = catchAsync(async (req, res) => {
     const { profileImageUrl } = req.body;
 
     if (!userId) {
-      return res.status(400).json({ message: "User Not Found" });
+      return res.status(400).json({ message: 'User Not Found' });
     }
 
     await userService.uploadImageUrl(profileImageUrl);
 
-    return res.status(200).json({ message: "user image upload successfully" });
+    return res.status(200).json({ message: 'user image upload successfully' });
   } catch (err) {
     console.log(err);
     res.status(400).json({
-      message: "Error uploading image in uploadImageUrl",
+      message: 'Error uploading image in uploadImageUrl',
     });
   }
 });
@@ -71,5 +70,5 @@ module.exports = {
   getUserById,
   editUserInfo,
   uploadImageUrl,
-  getOtherUser
+  getOtherUser,
 };

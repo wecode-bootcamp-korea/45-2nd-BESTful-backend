@@ -36,8 +36,20 @@ const getFollowers = async (req, res, next) => {
   }
 };
 
+const getFollowings = async (req, res, next) => {
+  const userId = req.user.id;
+
+  try {
+    const followings = await followerService.getFollowings(userId);
+    res.status(200).json(followings);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   followUser,
   unfollowUser,
-  getFollowers
+  getFollowers,
+  getFollowings
 };   

@@ -58,8 +58,38 @@ const getFollowers = async (userId) => {
   }
 };
 
+const getFollowings = async (userId) => {
+  try {
+    const query = `
+      SELECT
+        users.id,
+        users.email,
+        users.user_name userName,
+        users.cellphone,
+        users.profile_image_url profileImage,
+        users.sex,
+        users.bio,
+        users.created_at,
+        users.updated_at,
+        users.deleted_at
+      FROM users
+      JOIN followers ON followers.user_id = users.id
+      WHERE followers.followed_id = ?
+    `;
+    const rows = await dataSource.query(query, userId);
+
+    // Return the followings directly without converting to JSON
+    return rows;
+  } catch (err) {
+    console.log(err);
+    throw new DatabaseError('DataSource_Error: ' + err.message);
+  }
+};
+
+
 module.exports = {
   followUser,
   unfollowUser,
-  getFollowers
+  getFollowers,
+  getFollowings
 };

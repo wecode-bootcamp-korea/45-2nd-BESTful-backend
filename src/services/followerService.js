@@ -39,8 +39,19 @@ const getFollowers = async (userId) => {
   }
 };
 
+const getFollowings = async (userId) => {
+  try {
+    const followings = await followerDao.getFollowings(userId);
+    return followings;
+  } catch (err) {
+    console.log(err);
+    throw new BaseError('Failed to retrieve followings.');
+  }
+};
+
 module.exports = {
   followUser,
   unfollowUser,
-  getFollowers
+  getFollowers,
+  getFollowings
 };

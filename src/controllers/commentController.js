@@ -22,7 +22,19 @@ const addComment = catchAsync(async (req, res) => {
   return res.status(200).json({ message: 'ADD_COMMENT' });
 });
 
+const deleteComment = catchAsync(async (req, res) => {
+  const userId = req.params.userId;
+  const { feedId, commentId } = req.body;
+
+  if (!userId || !feedId || !commentId) throw new BaseError(400, 'EMPTY_KEY');
+
+  await commentService.deleteComment(userId, feedId, commentId);
+
+  return res.status(200).json({ message: 'DELETE_COMMENT' });
+});
+
 module.exports = {
   getCommentByFeedId,
   addComment,
+  deleteComment,
 };

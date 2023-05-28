@@ -1,11 +1,12 @@
 const dataSource = require('../models/dataSource');
-const { DatabaseError } = require('../utils/error');
+const { DatabaseError, BaseError } = require('../utils/error');
 
 const getCommentByFeedId = async (feedId) => {
   try {
     return await dataSource.query(
       `
       SELECT
+      c.id,
       c.contents,
       u.user_name,
       u.profile_image_url,
@@ -76,7 +77,70 @@ const addComment = async (userId, feedId, content) => {
   }
 };
 
+const deleteComment = async (userId, feedId, commentId) => {
+  const queryRunner = dataSource.createQueryRunner();
+
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    const user = await queryRunner.query(
+      `
+      SELECT id FROM users WHERE id = ?
+    `,
+      [userId]
+    );
+
+    if (!user || user.length === 0) {
+      throw new BaseError('USER_NOT_FOUND');
+    }
+
+    await queryRunner.query(
+      `
+      UPDATE comments
+      SET parents_id = NULL
+      WHERE parents_id = ?
+    `,
+      [commentId]
+    );
+
+    await queryRunner.query(
+      `
+      DELETE FROM comments
+      WHERE user_id = ? AND feed_id = ? AND id = ?
+    `,
+      [user[0].id, feedId, commentId]
+    );
+
+    await queryRunner.commitTransaction();
+
+    return await dataSource.query(
+      `
+      SELECT
+      c.id,
+      c.contents,
+      u.user_name,
+      u.profile_image_url,
+      date_format(c.created_at, '%Y.%m.%d.%H.%i') createdAt
+      FROM comments c
+      JOIN users u ON u.id = c.user_id
+      JOIN feed f ON c.feed_id = f.id
+      WHERE c.feed_id = ?
+      ORDER BY c.created_at
+    `,
+      [feedId]
+    );
+  } catch (error) {
+    console.log(error);
+    await queryRunner.rollbackTransaction();
+    throw new DatabaseError('DATABASE_ERROR');
+  } finally {
+    await queryRunner.release();
+  }
+};
+
 module.exports = {
   getCommentByFeedId,
   addComment,
+  deleteComment,
 };

@@ -5,4 +5,6 @@ const auth = require('../utils/auth');
 
 router.post('', auth, commentController.addComment);
 
+router.patch('', auth, commentController.deleteComment);
+
 module.exports = { router };

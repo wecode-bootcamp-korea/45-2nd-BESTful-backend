@@ -16,4 +16,17 @@ const getAllFeed = catchAsync(async (req, res) => {
   return res.status(200).json(result);
 });
 
-module.exports = { getAllFeed };
+const uploadFeed = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { description } = req.body;
+
+  const result = await feedService.uploadFeed(userId, description);
+
+  return res.status(201).json({ feed: result });
+});
+
+
+module.exports = {
+  getAllFeed,
+  uploadFeed
+};

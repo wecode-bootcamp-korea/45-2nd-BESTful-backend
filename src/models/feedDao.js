@@ -101,7 +101,22 @@ const uploadFeed = async (userId, description) => {
   }
 };
 
+const deleteFeed = async (feedId) => {
+  const result = await dataSource.query('DELETE FROM feed WHERE id = ?', [feedId]);
+  return result;
+};
+
+const getFeedById = async (feedId) => {
+  const feed = await dataSource.query('SELECT * FROM feed WHERE id = ?', [feedId]);
+  if (feed.length > 0) {
+    return feed[0];
+  }
+  return null;
+};
+
 module.exports = {
   getAllFeed,
   uploadFeed,
+  deleteFeed,
+  getFeedById
 };

@@ -51,8 +51,24 @@ const uploadFeed = catchAsync(async (req, res) => {
   return res.status(201).json({ feed: result });
 });
 
+const deleteFeed = catchAsync(async (req, res) => {
+  const { feedId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    await feedService.deleteFeed(feedId, userId);
+    return res.status(200).json({ message: "Feed deleted successfully." });
+  } catch (error) {
+    if (error.message === 'Post does not exist') {
+      return res.status(404).json({ message: error.message });
+    } else if (error.message === 'User does not match the post id') {
+      return res.status(403).json({ message: error.message });
+    }
+  }
+});
+
 module.exports = {
   getAllFeed,
-  getAllFeedFollowings,
   uploadFeed,
+  deleteFeed
 };

@@ -15,5 +15,6 @@ router.get('/users/:targetUserId', feedController.getAllFeed);
 router.get('/followings', auth, feedController.getAllFeedFollowings);
 router.get('/:feedId/comment', commentController.getCommentByFeedId);
 router.post('/upload', checkLogInToken, feedController.uploadFeed);
+router.delete('/:feedId', checkLogInToken, feedController.deleteFeed);
 
 module.exports = { router };

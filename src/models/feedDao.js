@@ -87,6 +87,22 @@ const getAllFeed = async (offset, limit, genderId, seasonId, styleId, orderBy) =
   }
 };
 
+
+const uploadFeed = async (userId, description) => {
+  try {
+    const result = await dataSource.query(
+      `INSERT INTO feed (user_id, description) VALUES (?, ?)`,
+      [userId, description]
+    );
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    throw new DatabaseError('CAN_NOT_UPLOAD_FEED');
+  }
+};
+
 module.exports = {
   getAllFeed,
+  uploadFeed
 };

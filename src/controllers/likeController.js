@@ -32,9 +32,8 @@ const getLike = catchAsync(async (req, res) => {
   }
 });
 
-
 module.exports = {
   likeFeeds,
   unlikeFeeds,
-  getLike
+  getLike,
 };

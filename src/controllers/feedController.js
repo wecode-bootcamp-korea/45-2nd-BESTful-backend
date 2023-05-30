@@ -21,13 +21,13 @@ const getAllFeed = catchAsync(async (req, res) => {
 const uploadFeed = async (req, res, next) => {
   const userId = req.user.id;
   const { feedDescription } = req.body;
-  const feedInfo = JSON.parse(req.body.feedInfo)
+  const feedInfo = JSON.parse(req.body.feedInfo);
 
   if (!req.files || req.files.length === 0) {
     return res.status(400).json({ message: 'No files uploaded.' });
   }
 
-  const contentUrls = req.files.map(file => file.location);
+  const contentUrls = req.files.map((file) => file.location);
 
   if (!contentUrls || contentUrls.length === 0) {
     return res.status(400).json({ message: 'No content URLs extracted.' });

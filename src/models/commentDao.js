@@ -6,10 +6,10 @@ const getCommentByFeedId = async (feedId) => {
     return await dataSource.query(
       `
       SELECT
-      c.id,
-      c.contents,
-      u.user_name,
-      u.profile_image_url,
+      c.id commentsId,
+      c.contents commentContents,
+      u.user_name userName,
+      u.profile_image_url profileImageUrl,
       date_format(c.created_at, '%Y.%m.%d.%H.%i') createdAt
       FROM comments c
       JOIN users u ON u.id = c.user_id

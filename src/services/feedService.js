@@ -1,29 +1,7 @@
 const feedDao = require('../models/feedDao');
 
-const getAllFeed = async (
-  feedId,
-  targetUserId,
-  selectedUserId,
-  offset,
-  limit,
-  genderId,
-  seasonId,
-  styleId,
-  orderBy,
-  userId
-) => {
-  return await feedDao.getAllFeed(
-    feedId,
-    targetUserId,
-    selectedUserId,
-    offset,
-    limit,
-    genderId,
-    seasonId,
-    styleId,
-    orderBy,
-    userId
-  );
+const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, limit, genderId, seasonId, styleId, orderBy) => {
+  return await feedDao.getAllFeed(userId, feedId, targetUserId, selectedUserId, offset, limit, genderId, seasonId, styleId, orderBy);
 };
 
 const uploadFeed = async (userId, description) => {
@@ -43,9 +21,8 @@ const deleteFeed = async (feedId, userId) => {
   return { message: 'Feed successfully deleted.' };
 };
 
-
 module.exports = {
   getAllFeed,
   uploadFeed,
-  deleteFeed
+  deleteFeed,
 };

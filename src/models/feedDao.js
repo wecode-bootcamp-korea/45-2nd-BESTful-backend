@@ -7,7 +7,6 @@ const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, 
     const baseQuery = `
       SELECT
       subq.userId,
-      subq.userId,
       subq.feedId,
       subq.userName,
       subq.profileImageUrl,
@@ -54,10 +53,10 @@ const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, 
             JOIN users u ON u.id = f.user_id
             JOIN content_files c_f ON c_f.feed_id = f.id
             LEFT JOIN likes l ON l.feed_id = f.id
-            JOIN tags t ON c_f.id = t.content_file_id
-            JOIN clothes c ON t.cloth_id = c.id
-            JOIN seasons sea ON c.season_id = sea.id
-            JOIN styles sty ON c.style_id = sty.id  
+            LEFT JOIN tags t ON c_f.id = t.content_file_id
+            LEFT JOIN clothes c ON t.cloth_id = c.id
+            LEFT JOIN seasons sea ON c.season_id = sea.id
+            LEFT JOIN styles sty ON c.style_id = sty.id  
         `;
 
     const whereCondition = builder.filterBuilder(genderId, seasonId, styleId, userId, feedId, targetUserId, selectedUserId);
@@ -93,10 +92,7 @@ const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, 
 
 const uploadFeed = async (userId, feedDescription) => {
   try {
-    const resultFeed = await dataSource.query(
-      `INSERT INTO feed (user_id, description) VALUES (?, ?)`,
-      [userId, feedDescription]
-    );
+    const resultFeed = await dataSource.query(`INSERT INTO feed (user_id, description) VALUES (?, ?)`, [userId, feedDescription]);
     const feedId = resultFeed.insertId;
 
     return { feedId };
@@ -108,10 +104,7 @@ const uploadFeed = async (userId, feedDescription) => {
 
 const uploadContentFile = async (feedId, contentUrl) => {
   try {
-    const resultContentFile = await dataSource.query(
-      `INSERT INTO content_files (feed_id, content_url) VALUES (?, ?)`,
-      [feedId, contentUrl]
-    );
+    const resultContentFile = await dataSource.query(`INSERT INTO content_files (feed_id, content_url) VALUES (?, ?)`, [feedId, contentUrl]);
     const contentFileId = resultContentFile.insertId;
 
     return { contentFileId };
@@ -121,21 +114,41 @@ const uploadContentFile = async (feedId, contentUrl) => {
   }
 };
 
-const createTag = async (contentFileId, clothName, clothPrice, tagContent, coordinateX, coordinateY, clothBuyingLink, clothInformation, styleName, seasonName) => {
+const createTag = async (
+  contentFileId,
+  clothName,
+  clothPrice,
+  tagContent,
+  coordinateX,
+  coordinateY,
+  clothBuyingLink,
+  clothInformation,
+  styleName,
+  seasonName
+) => {
   try {
-    const [cloth] = await dataSource.query(`
+    const [cloth] = await dataSource.query(
+      `
       SELECT id FROM clothes WHERE name = ?
-    `, [clothName])
+    `,
+      [clothName]
+    );
 
-    const [style] = await dataSource.query(`
+    const [style] = await dataSource.query(
+      `
       SELECT id FROM styles WHERE style = ?
-    `, [styleName])
+    `,
+      [styleName]
+    );
 
-    const [season] = await dataSource.query(`
+    const [season] = await dataSource.query(
+      `
       SELECT id FROM seasons WHERE seasons = ?
-    `, [seasonName])
+    `,
+      [seasonName]
+    );
 
-    if (!cloth | !style | !season) throw new Error()
+    if (!cloth | !style | !season) throw new Error();
 
     const result = await dataSource.query(
       `INSERT INTO tags (content_file_id, cloth_id, coordinate_x, coordinate_y, contents) 
@@ -164,5 +177,5 @@ module.exports = {
   uploadFeed,
   uploadContentFile,
   createTag,
-  deleteFeed
+  deleteFeed,
 };

@@ -1,5 +1,5 @@
 const express = require('express');
-const checkLogInToken = require('../utils/auth');
+const { checkLogInToken } = require('../utils/auth');
 const likeController = require('../controllers/likeController');
 
 const router = express.Router();

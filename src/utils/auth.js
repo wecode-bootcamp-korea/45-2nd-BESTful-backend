@@ -30,4 +30,23 @@ const checkLogInToken = async (req, res, next) => {
   }
 };
 
-module.exports = checkLogInToken;
+const validateTokenUserUndefined = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+    let user;
+    if (token) {
+      const payload = jwt.verify(token, process.env.SECRET_KEY);
+      user = payload.id;
+    }
+    req.user = user;
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = {
+  checkLogInToken,
+  validateTokenUserUndefined,
+};

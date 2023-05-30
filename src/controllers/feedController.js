@@ -18,14 +18,28 @@ const getAllFeed = catchAsync(async (req, res) => {
   return res.status(200).json(result);
 });
 
-const uploadFeed = catchAsync(async (req, res) => {
+const uploadFeed = async (req, res, next) => {
   const userId = req.user.id;
-  const { description } = req.body;
+  const { feedDescription } = req.body;
+  const feedInfo = JSON.parse(req.body.feedInfo)
 
-  const result = await feedService.uploadFeed(userId, description);
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({ message: 'No files uploaded.' });
+  }
 
-  return res.status(201).json({ feed: result });
-});
+  const contentUrls = req.files.map(file => file.location);
+
+  if (!contentUrls || contentUrls.length === 0) {
+    return res.status(400).json({ message: 'No content URLs extracted.' });
+  }
+
+  try {
+    await feedService.uploadFeed(userId, feedDescription, contentUrls, feedInfo);
+    res.status(201).json({ message: 'Feed uploaded successfully.' });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const deleteFeed = catchAsync(async (req, res) => {
   const { feedId } = req.params;

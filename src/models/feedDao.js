@@ -91,14 +91,66 @@ const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, 
   }
 };
 
-const uploadFeed = async (userId, description) => {
+const uploadFeed = async (userId, feedDescription) => {
   try {
-    const result = await dataSource.query(`INSERT INTO feed (user_id, description) VALUES (?, ?)`, [userId, description]);
+    const resultFeed = await dataSource.query(
+      `INSERT INTO feed (user_id, description) VALUES (?, ?)`,
+      [userId, feedDescription]
+    );
+    const feedId = resultFeed.insertId;
 
-    return result;
+    return { feedId };
   } catch (error) {
     console.log(error);
     throw new DatabaseError('CAN_NOT_UPLOAD_FEED');
+  }
+};
+
+const uploadContentFile = async (feedId, contentUrl) => {
+  try {
+    const resultContentFile = await dataSource.query(
+      `INSERT INTO content_files (feed_id, content_url) VALUES (?, ?)`,
+      [feedId, contentUrl]
+    );
+    const contentFileId = resultContentFile.insertId;
+
+    return { contentFileId };
+  } catch (error) {
+    console.log(error);
+    throw new DatabaseError('CAN_NOT_UPLOAD_CONTENT_FILE');
+  }
+};
+
+const createTag = async (contentFileId, clothName, clothPrice, tagContent, coordinateX, coordinateY, clothBuyingLink, clothInformation, styleName, seasonName) => {
+  try {
+    const [cloth] = await dataSource.query(`
+      SELECT id FROM clothes WHERE name = ?
+    `, [clothName])
+
+    const [style] = await dataSource.query(`
+      SELECT id FROM styles WHERE style = ?
+    `, [styleName])
+
+    const [season] = await dataSource.query(`
+      SELECT id FROM seasons WHERE seasons = ?
+    `, [seasonName])
+
+    if (!cloth | !style | !season) throw new Error()
+
+    const result = await dataSource.query(
+      `INSERT INTO tags (content_file_id, cloth_id, coordinate_x, coordinate_y, contents) 
+        VALUES (?, ?, ?, ?, ?)`,
+      [contentFileId, cloth.id, coordinateX, coordinateY, tagContent]
+    );
+
+    await dataSource.query(
+      `INSERT INTO clothes (name, price, buying_link, information, style_id, season_id) 
+        VALUES (?, ?, ?, ?, ?, ?)`,
+      [clothName, clothPrice, clothBuyingLink, clothInformation, style.id, season.id]
+    );
+  } catch (error) {
+    console.log(error);
+    throw new DatabaseError('CAN_NOT_CREATE_TAG');
   }
 };
 
@@ -107,17 +159,10 @@ const deleteFeed = async (feedId) => {
   return result;
 };
 
-const getFeedById = async (feedId) => {
-  const feed = await dataSource.query('SELECT * FROM feed WHERE id = ?', [feedId]);
-  if (feed.length > 0) {
-    return feed[0];
-  }
-  return null;
-};
-
 module.exports = {
   getAllFeed,
   uploadFeed,
-  deleteFeed,
-  getFeedById,
+  uploadContentFile,
+  createTag,
+  deleteFeed
 };

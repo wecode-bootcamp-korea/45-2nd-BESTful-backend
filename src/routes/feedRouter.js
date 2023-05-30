@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../utils/auth');
+const { upload } = require('../utils/s3');
 
 const checkLogInToken = require('../utils/auth');
 const feedController = require('../controllers/feedController');
@@ -14,7 +15,7 @@ router.get('/users/:targetUserId', feedController.getAllFeed);
 router.get('/likes/:selectedUserId', feedController.getAllFeed);
 router.get('/followings', auth, feedController.getAllFeedFollowings);
 router.get('/:feedId/comment', commentController.getCommentByFeedId);
-router.post('/upload', checkLogInToken, feedController.uploadFeed);
+router.post('/upload', checkLogInToken, upload.array('contentsImage'), feedController.uploadFeed);
 router.delete('/:feedId', checkLogInToken, feedController.deleteFeed);
 
 module.exports = { router };

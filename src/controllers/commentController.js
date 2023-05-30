@@ -23,7 +23,7 @@ const addComment = catchAsync(async (req, res) => {
 });
 
 const deleteComment = catchAsync(async (req, res) => {
-  const userId = req.params.userId;
+  const userId = req.user.id;
   const { feedId, commentId } = req.body;
 
   if (!userId || !feedId || !commentId) throw new BaseError(400, 'EMPTY_KEY');

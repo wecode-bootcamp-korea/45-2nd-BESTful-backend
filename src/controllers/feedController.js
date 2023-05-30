@@ -58,7 +58,7 @@ const deleteFeed = catchAsync(async (req, res) => {
 
   try {
     await feedService.deleteFeed(feedId, userId);
-    return res.status(200).json({ message: "Feed deleted successfully." });
+    return res.status(200).json({ message: 'Feed deleted successfully.' });
   } catch (error) {
     if (error.message === 'Post does not exist') {
       return res.status(404).json({ message: error.message });
@@ -70,6 +70,7 @@ const deleteFeed = catchAsync(async (req, res) => {
 
 module.exports = {
   getAllFeed,
+  getAllFeedFollowings,
   uploadFeed,
-  deleteFeed
+  deleteFeed,
 };

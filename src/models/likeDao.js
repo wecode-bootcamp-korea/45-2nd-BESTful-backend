@@ -26,8 +26,20 @@ const removeLike = async (userId, feedId) => {
   }
 };
 
+const getLike = async (userId, feedId) => {
+  try {
+    const query = 'SELECT * FROM likes WHERE user_id = ? AND feed_id = ?';
+    const values = [userId, feedId];
+    const [result] = await dataSource.query(query, values);
+
+    return result ? { id: result.id, userId, feedId } : null;
+  } catch (error) {
+    throw new DatabaseError('Failed to get like from the database.', 500);
+  }
+};
 
 module.exports = {
   createLike,
-  removeLike
+  removeLike,
+  getLike
 };

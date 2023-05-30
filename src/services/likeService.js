@@ -19,7 +19,17 @@ const removeLike = async (userId, feedId) => {
   }
 };
 
+const getLike = async (userId, feedId) => {
+  try {
+    const like = await likeDao.getLike(userId, feedId);
+    return like;
+  } catch (error) {
+    throw new BaseError('Failed to get like.', 500);
+  }
+};
+
 module.exports = {
   createLike,
-  removeLike
+  removeLike,
+  getLike
 };

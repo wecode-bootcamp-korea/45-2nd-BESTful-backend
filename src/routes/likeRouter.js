@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.post('/:feedId', checkLogInToken, likeController.likeFeeds);
 router.delete('/:feedId', checkLogInToken, likeController.unlikeFeeds);
+router.get('/:feedId', checkLogInToken, likeController.getLike);
 
 module.exports = { router };

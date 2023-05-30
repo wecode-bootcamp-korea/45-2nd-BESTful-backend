@@ -41,13 +41,13 @@ const editUserInfo = async (req, res) => {
 const uploadImageUrl = catchAsync(async (req, res) => {
   try {
     const userId = req.user.id;
-    const { profileImageUrl } = req.body;
+    const profileImageUrl = req.file.location;
 
     if (!userId) {
       return res.status(400).json({ message: 'User Not Found' });
     }
 
-    await userService.uploadImageUrl(profileImageUrl);
+    await userService.uploadImageUrl(userId, profileImageUrl);
 
     return res.status(200).json({ message: 'user image upload successfully' });
   } catch (err) {

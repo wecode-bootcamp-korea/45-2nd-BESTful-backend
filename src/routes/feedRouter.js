@@ -6,6 +6,7 @@ const checkLogInToken = require('../utils/auth');
 const feedController = require('../controllers/feedController');
 const commentController = require('../controllers/commentController');
 const bestController = require('../controllers/bestController');
+const auth = require('../utils/auth')
 
 router.get('', feedController.getAllFeed);
 router.get('/best', feedController.getAllFeed);

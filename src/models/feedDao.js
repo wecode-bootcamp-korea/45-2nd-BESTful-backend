@@ -109,7 +109,6 @@ const uploadContentFile = async (feedId, contentUrl) => {
 
     return { contentFileId };
   } catch (error) {
-    console.log(error);
     throw new DatabaseError('CAN_NOT_UPLOAD_CONTENT_FILE');
   }
 };
@@ -127,13 +126,6 @@ const createTag = async (
   seasonName
 ) => {
   try {
-    const [cloth] = await dataSource.query(
-      `
-      SELECT id FROM clothes WHERE name = ?
-    `,
-      [clothName]
-    );
-
     const [style] = await dataSource.query(
       `
       SELECT id FROM styles WHERE style = ?
@@ -148,18 +140,18 @@ const createTag = async (
       [seasonName]
     );
 
-    if (!cloth | !style | !season) throw new Error();
+    if (!style | !season) throw new Error();
 
     const result = await dataSource.query(
-      `INSERT INTO tags (content_file_id, cloth_id, coordinate_x, coordinate_y, contents) 
-        VALUES (?, ?, ?, ?, ?)`,
-      [contentFileId, cloth.id, coordinateX, coordinateY, tagContent]
-    );
-
-    await dataSource.query(
       `INSERT INTO clothes (name, price, buying_link, information, style_id, season_id) 
         VALUES (?, ?, ?, ?, ?, ?)`,
       [clothName, clothPrice, clothBuyingLink, clothInformation, style.id, season.id]
+    );
+
+    await dataSource.query(
+      `INSERT INTO tags (content_file_id, cloth_id, coordinate_x, coordinate_y, contents) 
+        VALUES (?, ?, ?, ?, ?)`,
+      [contentFileId, result.insertId, coordinateX, coordinateY, tagContent]
     );
   } catch (error) {
     console.log(error);

@@ -31,9 +31,9 @@ const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, 
                       )
                   ) 
             FROM tags t
-            JOIN clothes c ON t.cloth_id = c.id
-            JOIN seasons sea ON c.season_id = sea.id
-            JOIN styles sty ON c.style_id = sty.id
+            LEFT JOIN clothes c ON t.cloth_id = c.id
+            LEFT JOIN seasons sea ON c.season_id = sea.id
+            LEFT JOIN styles sty ON c.style_id = sty.id
             WHERE t.content_file_id = subq.contentFileId
           )
         )
@@ -160,8 +160,17 @@ const createTag = async (
 };
 
 const deleteFeed = async (feedId) => {
+  console.log(`daod`, feedId);
   const result = await dataSource.query('DELETE FROM feed WHERE id = ?', [feedId]);
   return result;
+};
+
+const getFeedById = async (feedId) => {
+  const feed = await dataSource.query('SELECT * FROM feed WHERE id = ?', [feedId]);
+  if (feed.length > 0) {
+    return feed[0];
+  }
+  return null;
 };
 
 module.exports = {
@@ -170,4 +179,5 @@ module.exports = {
   uploadContentFile,
   createTag,
   deleteFeed,
+  getFeedById,
 };

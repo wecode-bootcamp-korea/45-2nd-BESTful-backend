@@ -2,8 +2,9 @@ const feedService = require('../services/feedService');
 const { catchAsync } = require('../utils/error');
 
 const getAllFeed = catchAsync(async (req, res) => {
-  const { from, count, genderId, seasonId, styleId, orderBy } = req.query;
+  const { from, count, gender, season, style, orderBy } = req.query;
   const { feedId, targetUserId, selectedUserId } = req.params;
+
   const userId = req.user;
 
   const DEFAULT_LIMIT = 3;
@@ -13,7 +14,7 @@ const getAllFeed = catchAsync(async (req, res) => {
   const offset = from ? from : DEFAULT_OFFSET;
   const limit = count ? count : DEFAULT_LIMIT;
 
-  const result = await feedService.getAllFeed(userId, feedId, targetUserId, selectedUserId, offset, limit, genderId, seasonId, styleId, orderBy);
+  const result = await feedService.getAllFeed(userId, feedId, targetUserId, selectedUserId, offset, limit, gender, season, style, orderBy);
 
   return res.status(200).json(result);
 });
@@ -45,16 +46,8 @@ const deleteFeed = catchAsync(async (req, res) => {
   const { feedId } = req.params;
   const userId = req.user.id;
 
-  try {
-    await feedService.deleteFeed(feedId, userId);
-    return res.status(200).json({ message: 'Feed deleted successfully.' });
-  } catch (error) {
-    if (error.message === 'Post does not exist') {
-      return res.status(404).json({ message: error.message });
-    } else if (error.message === 'User does not match the post id') {
-      return res.status(403).json({ message: error.message });
-    }
-  }
+  await feedService.deleteFeed(userId, feedId);
+  return res.status(200).json({ message: 'Feed deleted successfully.' });
 });
 
 module.exports = {

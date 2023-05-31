@@ -1,23 +1,19 @@
 const feedDao = require('../models/feedDao');
 
-const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, limit, genderId, seasonId, styleId, orderBy) => {
-  return await feedDao.getAllFeed(userId, feedId, targetUserId, selectedUserId, offset, limit, genderId, seasonId, styleId, orderBy);
+const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, limit, gender, season, style, orderBy) => {
+  return await feedDao.getAllFeed(userId, feedId, targetUserId, selectedUserId, offset, limit, gender, season, style, orderBy);
 };
 
 const uploadFeed = async (userId, feedDescription, contentUrls, feedInfo) => {
-
   const feed = await feedDao.uploadFeed(userId, feedDescription);
   const feedId = feed.feedId;
-  const contentsData = []
+  const contentsData = [];
 
   contentUrls.forEach((url, index) => {
-    contentsData.push(
-      {
-        url: url,
-        tagInfo: feedInfo[index].clothesInfo
-      }
-    )
-
+    contentsData.push({
+      url: url,
+      tagInfo: feedInfo[index].clothesInfo,
+    });
   });
 
   for (const content of contentsData) {
@@ -31,7 +27,7 @@ const uploadFeed = async (userId, feedDescription, contentUrls, feedInfo) => {
   }
 };
 
-const deleteFeed = async (feedId, userId) => {
+const deleteFeed = async (userId, feedId) => {
   const feed = await feedDao.getFeedById(feedId);
   if (!feed) {
     throw new Error('Post does not exist');
@@ -40,7 +36,7 @@ const deleteFeed = async (feedId, userId) => {
   if (feed.user_id !== userId) {
     throw new Error('User does not match the post id');
   }
-  await feedDao.deleteFeed(feedId);
+  await feedDao.deleteFeed(userId, feedId);
   return { message: 'Feed successfully deleted.' };
 };
 

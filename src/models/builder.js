@@ -1,16 +1,16 @@
-const filterBuilder = (genderId, seasonId, styleId, userId, feedId, targetUserId, selectedUserId) => {
+const filterBuilder = (gender, season, style, userId, feedId, targetUserId, selectedUserId) => {
   let conditionArr = [];
 
-  if (genderId) {
-    conditionArr.push(`u.sex = ${genderId}`);
+  if (gender) {
+    conditionArr.push(`u.sex = ${gender}`);
   }
 
-  if (seasonId) {
-    conditionArr.push(`sea.seasons = ${seasonId}`);
+  if (season) {
+    conditionArr.push(`sea.id = ${season}`);
   }
 
-  if (styleId) {
-    conditionArr.push(`sty.id= ${styleId}`);
+  if (style) {
+    conditionArr.push(`sty.id= ${style}`);
   }
 
   if (userId) {

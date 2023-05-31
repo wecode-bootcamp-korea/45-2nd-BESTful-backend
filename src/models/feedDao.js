@@ -2,7 +2,7 @@ const { DatabaseError } = require('../utils/error');
 const dataSource = require('./dataSource');
 const builder = require('./builder');
 
-const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, limit, genderId, seasonId, styleId, orderBy) => {
+const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, limit, gender, season, style, orderBy) => {
   try {
     const baseQuery = `
       SELECT
@@ -31,9 +31,9 @@ const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, 
                       )
                   ) 
             FROM tags t
-            JOIN clothes c ON t.cloth_id = c.id
-            JOIN seasons sea ON c.season_id = sea.id
-            JOIN styles sty ON c.style_id = sty.id
+            LEFT JOIN clothes c ON t.cloth_id = c.id
+            LEFT JOIN seasons sea ON c.season_id = sea.id
+            LEFT JOIN styles sty ON c.style_id = sty.id
             WHERE t.content_file_id = subq.contentFileId
           )
         )
@@ -59,7 +59,7 @@ const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, 
             LEFT JOIN styles sty ON c.style_id = sty.id  
         `;
 
-    const whereCondition = builder.filterBuilder(genderId, seasonId, styleId, userId, feedId, targetUserId, selectedUserId);
+    const whereCondition = builder.filterBuilder(gender, season, style, userId, feedId, targetUserId, selectedUserId);
     const sortQuery = builder.orderByBuilder(orderBy);
     const limitQuery = builder.limitBuilder(offset, limit);
     const groupByQuery = ` 
@@ -113,18 +113,7 @@ const uploadContentFile = async (feedId, contentUrl) => {
   }
 };
 
-const createTag = async (
-  contentFileId,
-  clothName,
-  clothPrice,
-  tagContent,
-  coordinateX,
-  coordinateY,
-  clothBuyingLink,
-  clothInformation,
-  styleName,
-  seasonName
-) => {
+const createTag = async (contentFileId, clothName, clothPrice, tagContent, coordinateX, coordinateY, clothBuyingLink, clothInformation, styleName, seasonName) => {
   try {
     const [style] = await dataSource.query(
       `
@@ -159,9 +148,47 @@ const createTag = async (
   }
 };
 
-const deleteFeed = async (feedId) => {
-  const result = await dataSource.query('DELETE FROM feed WHERE id = ?', [feedId]);
-  return result;
+const deleteFeed = async (userId, feedId) => {
+  console.log(`userId`, userId, `feedId`, feedId);
+  const queryRunner = dataSource.createQueryRunner();
+
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+  try {
+    const feed = await getFeedById(feedId);
+    if (!feed) {
+      throw new Error('Post does not exist');
+    }
+
+    await queryRunner.query('DELETE t FROM tags t JOIN content_files cf ON cf.id = t.content_file_id WHERE cf.feed_id = ?', [feedId]);
+    await queryRunner.query('UPDATE comments SET parents_id = NULL WHERE feed_id = ?', [feedId]);
+    await queryRunner.query('DELETE FROM comments WHERE feed_id = ?', [feedId]);
+    await queryRunner.query('DELETE FROM likes WHERE feed_id = ?', [feedId]);
+    await queryRunner.query('DELETE FROM content_files WHERE feed_id = ?', [feedId]);
+    const result = await queryRunner.query('DELETE FROM feed WHERE id = ?', [feedId]);
+
+    if (result.affectedRows === 0) {
+      throw new Error('Feed deletion failed');
+    }
+    await queryRunner.commitTransaction();
+
+    return { message: 'Feed deleted successfully.' };
+  } catch (error) {
+    console.log(error);
+    await queryRunner.rollbackTransaction();
+    throw new DatabaseError('DATABASE_ERROR');
+  } finally {
+    await queryRunner.release();
+  }
+};
+
+const getFeedById = async (feedId) => {
+  console.log(feedId);
+  const feed = await dataSource.query('SELECT * FROM feed WHERE id = ?', [feedId]);
+  if (feed.length > 0) {
+    return feed[0];
+  }
+  return null;
 };
 
 module.exports = {
@@ -170,4 +197,5 @@ module.exports = {
   uploadContentFile,
   createTag,
   deleteFeed,
+  getFeedById,
 };

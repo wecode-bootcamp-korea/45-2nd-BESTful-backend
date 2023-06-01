@@ -11,7 +11,7 @@ const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, 
       subq.userName,
       subq.profileImageUrl,
       subq.feedDescription,
-      subq.createdAt,
+      subq.createdAt, 
       subq.likesCount,
       JSON_ARRAYAGG(
         JSON_OBJECT(
@@ -150,7 +150,6 @@ const createTag = async (contentFileId, clothName, clothPrice, tagContent, coord
 };
 
 const deleteFeed = async (userId, feedId) => {
-  console.log(`userId`, userId, `feedId`, feedId);
   const queryRunner = dataSource.createQueryRunner();
 
   await queryRunner.connect();
@@ -184,7 +183,6 @@ const deleteFeed = async (userId, feedId) => {
 };
 
 const getFeedById = async (feedId) => {
-  console.log(feedId);
   const feed = await dataSource.query('SELECT * FROM feed WHERE id = ?', [feedId]);
   if (feed.length > 0) {
     return feed[0];

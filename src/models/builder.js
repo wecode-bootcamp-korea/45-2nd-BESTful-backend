@@ -30,7 +30,7 @@ const filterBuilder = (gender, season, style, userId, feedId, targetUserId, sele
   }
 
   if (selectedUserId) {
-    console.log(selectedUserId);
+    // console.log(selectedUserId);
     conditionArr.push(`l.user_id IN (
       SELECT user_id
       FROM likes

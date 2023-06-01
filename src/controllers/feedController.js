@@ -7,7 +7,7 @@ const getAllFeed = catchAsync(async (req, res) => {
 
   const userId = req.user;
 
-  const DEFAULT_LIMIT = 3;
+  const DEFAULT_LIMIT = 100;
 
   const DEFAULT_OFFSET = 0;
 
@@ -29,6 +29,8 @@ const uploadFeed = async (req, res, next) => {
   }
 
   const contentUrls = req.files.map((file) => file.location);
+  console.log(feedInfo);
+  console.log(contentUrls);
 
   if (!contentUrls || contentUrls.length === 0) {
     return res.status(400).json({ message: 'No content URLs extracted.' });

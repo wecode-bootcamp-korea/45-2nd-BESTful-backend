@@ -30,8 +30,9 @@ const filterBuilder = (gender, season, style, userId, feedId, targetUserId, sele
   }
 
   if (selectedUserId) {
+    console.log(selectedUserId);
     conditionArr.push(`l.user_id IN (
-      SELECT feed_id
+      SELECT user_id
       FROM likes
       WHERE user_id = ${selectedUserId}
     )`);
@@ -46,7 +47,7 @@ const filterBuilder = (gender, season, style, userId, feedId, targetUserId, sele
 };
 
 const limitBuilder = (offset, limit) => {
-  if (!limit) limit = 6;
+  if (!limit) limit = 100;
 
   if (!offset) offset = 0;
 
@@ -58,7 +59,7 @@ const orderByBuilder = (orderBy) => {
 
   switch (orderBy) {
     case 'likesDesc':
-      orderQuery = 'ORDER BY subq.likesCount DESC';
+      orderQuery = 'ORDER BY subq.likesCount DESC, subq.createdAt DESC';
       break;
     default:
       orderQuery = 'ORDER BY subq.createdAt DESC';

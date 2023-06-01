@@ -15,6 +15,7 @@ const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, 
       subq.likesCount,
       JSON_ARRAYAGG(
         JSON_OBJECT(
+            'id', subq.contentFileId,
             'contentUrl', subq.contentUrl,
             'clothesInfo', (
                 SELECT JSON_ARRAYAGG(
@@ -45,7 +46,7 @@ const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, 
                 u.user_name AS userName,
                 u.profile_image_url profileImageUrl,
                 f.description AS feedDescription,
-                DATE_FORMAT(f.created_at, '%Y.%m.%d') AS createdAt,
+                DATE_FORMAT(f.created_at, '%Y.%m.%d %H:%i:%s') AS createdAt,
                 c_f.content_url AS contentUrl,
                 c_f.id AS contentFileId,
                 COUNT(DISTINCT l.id) likesCount
@@ -68,7 +69,7 @@ const getAllFeed = async (userId, feedId, targetUserId, selectedUserId, offset, 
     u.user_name, 
     u.profile_image_url, 
     f.description, 
-    DATE_FORMAT(f.created_at, '%Y.%m.%d'),
+    DATE_FORMAT(f.created_at, '%Y.%m.%d %H:%i:%s'),
     c_f.content_url, 
     c_f.id
     ) AS subq 

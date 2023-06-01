@@ -15,7 +15,7 @@ router.get('/:feedId', feedController.getAllFeed);
 router.get('/users/:targetUserId', feedController.getAllFeed);
 router.get('/likes/:selectedUserId', feedController.getAllFeed);
 router.get('/:feedId/comment', commentController.getCommentByFeedId);
-router.post('/upload', checkLogInToken, upload.array("contentsImage"), feedController.uploadFeed);
+router.post('/upload', checkLogInToken, upload.array('contentsImage'), feedController.uploadFeed);
 router.delete('/:feedId', checkLogInToken, feedController.deleteFeed);
 
 module.exports = { router };

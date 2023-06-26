@@ -40,16 +40,10 @@ const getUserById = async (userId) => {
 const editUserInfo = async (userId, userName, cellphone, sex, bio) => {
   try {
     await getUserById(userId);
-    const editUserInfo = await userDao.editUserInfo(
-      userId,
-      userName,
-      cellphone,
-      sex,
-      bio
-    );
+    const editUserInfo = await userDao.editUserInfo(userId, userName, cellphone, sex, bio);
     return editUserInfo;
   } catch (err) {
-    throw new Error("Error_ editUserInfo /usersService " + err.message);
+    throw new Error('Error_ editUserInfo /usersService ' + err.message);
   }
 };
 
@@ -59,7 +53,7 @@ const uploadImageUrl = async (userId, profileImageUrl) => {
     const uploadImageResult = await userDao.uploadImageUrl(userId, profileImageUrl);
     return uploadImageResult;
   } catch (err) {
-    throw new Error("Error uploading image in uploadImageUrl: " + err.message);
+    throw new Error('Error uploading image in uploadImageUrl: ' + err.message);
   }
 };
 
@@ -72,5 +66,5 @@ module.exports = {
   getUserById,
   editUserInfo,
   uploadImageUrl,
-  getOtherUser
+  getOtherUser,
 };

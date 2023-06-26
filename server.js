@@ -1,5 +1,5 @@
-const { createApp } = require("./app");
-const dataSource = require("./src/models/dataSource");
+const { createApp } = require('./app');
+const dataSource = require('./src/models/dataSource');
 
 const start = async () => {
   const app = createApp();
@@ -8,10 +8,10 @@ const start = async () => {
     dataSource
       .initialize()
       .then(() => {
-        console.log("Data Source has been initialized!");
+        console.log('Data Source has been initialized!');
       })
       .catch((err) => {
-        console.log("Error occured during Data Source initializtion!", err);
+        console.log('Error occured during Data Source initializtion!', err);
         dataSource.destroy();
       });
 
